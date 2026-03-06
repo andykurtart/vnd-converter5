@@ -1,0 +1,1271 @@
+<!DOCTYPE html>
+<html lang="ru" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Дананг — конвертер и гид</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ══════════════════════════════════════════
+   CSS VARIABLES — LIGHT & DARK
+══════════════════════════════════════════ */
+:root {
+  --bg:        #F5F3F0;
+  --surface:   #FFFFFF;
+  --surface2:  #F0EDE8;
+  --border:    #E2DDD8;
+  --border2:   #CEC8C0;
+  --text:      #1A1714;
+  --text-mid:  #6B6560;
+  --text-dim:  #9E9890;
+  --accent:    #2B2420;
+  --vnd:       #2E6644;
+  --usd:       #1C3A6B;
+  --byn:       #7A2318;
+  --tag-bg:    #EDEBE8;
+  --tab-h:     64px;
+  --hero-bg:   #2B2420;
+  --hero-text: #FFFFFF;
+}
+[data-theme="dark"] {
+  --bg:        #0F0D0C;
+  --surface:   #1C1916;
+  --surface2:  #252220;
+  --border:    #2E2A27;
+  --border2:   #3A3530;
+  --text:      #F0EDE8;
+  --text-mid:  #9E9890;
+  --text-dim:  #5C5852;
+  --accent:    #D4C9BC;
+  --vnd:       #5AAF7A;
+  --usd:       #6B9FDD;
+  --byn:       #D4695C;
+  --tag-bg:    #252220;
+  --hero-bg:   #1C1916;
+  --hero-text: #F0EDE8;
+}
+
+/* ══════════════════════════════════════════
+   BASE
+══════════════════════════════════════════ */
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; }
+body {
+  background: var(--bg);
+  font-family: 'Inter', sans-serif;
+  color: var(--text);
+  -webkit-font-smoothing: antialiased;
+  padding-bottom: var(--tab-h);
+  transition: background 0.25s, color 0.25s;
+}
+a { color: inherit; text-decoration: none; }
+
+/* ══════════════════════════════════════════
+   TOP BAR
+══════════════════════════════════════════ */
+.top-bar {
+  position: sticky;
+  top: 0;
+  z-index: 200;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 20px;
+  height: 52px;
+  gap: 12px;
+}
+.top-bar-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+.top-logo {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: var(--accent);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+  flex-shrink: 0;
+  transition: background 0.25s;
+}
+.top-title {
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-mid);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+/* Theme toggle */
+.theme-toggle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+  cursor: pointer;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+.toggle-track {
+  width: 44px;
+  height: 26px;
+  border-radius: 100px;
+  background: var(--border2);
+  position: relative;
+  transition: background 0.25s;
+}
+[data-theme="dark"] .toggle-track { background: var(--accent); }
+.toggle-thumb {
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: white;
+  transition: transform 0.25s;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.2);
+}
+[data-theme="dark"] .toggle-thumb { transform: translateX(18px); }
+.toggle-icon { font-size: 0.9rem; }
+
+/* ══════════════════════════════════════════
+   PAGES
+══════════════════════════════════════════ */
+.page { display: none; }
+.page.active { display: block; }
+
+/* Detail page */
+.detail-page { display: none; }
+.detail-page.active { display: block; }
+
+/* ══════════════════════════════════════════
+   SECTION HERO HEADERS
+══════════════════════════════════════════ */
+.section-hero {
+  background: var(--hero-bg);
+  color: var(--hero-text);
+  padding: 32px 24px 28px;
+  position: relative;
+  overflow: hidden;
+}
+.section-hero::after {
+  content: attr(data-emoji);
+  position: absolute;
+  right: 28px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 5.5rem;
+  opacity: 1;
+  pointer-events: none;
+  line-height: 1;
+  filter: drop-shadow(0 4px 16px rgba(0,0,0,0.25));
+}
+[data-theme="dark"] .section-hero { background: var(--surface); border-bottom: 1px solid var(--border); }
+.hero-eyebrow {
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  opacity: 0.5;
+  margin-bottom: 8px;
+}
+.hero-title {
+  font-size: clamp(1.5rem, 5vw, 2.2rem);
+  font-weight: 700;
+  letter-spacing: -0.025em;
+  line-height: 1.1;
+  margin-bottom: 8px;
+}
+.hero-sub {
+  font-size: 0.82rem;
+  opacity: 0.65;
+  line-height: 1.5;
+  max-width: 480px;
+}
+.hero-stats {
+  display: flex;
+  gap: 20px;
+  margin-top: 18px;
+  flex-wrap: wrap;
+}
+.hero-stat {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.hero-stat-val { font-size: 1.2rem; font-weight: 700; }
+.hero-stat-label { font-size: 0.65rem; opacity: 0.5; letter-spacing: 0.06em; text-transform: uppercase; }
+
+/* Breadcrumb nav inside hero */
+.hero-nav {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 14px;
+  font-size: 0.72rem;
+  opacity: 0.55;
+}
+.hero-nav-btn {
+  background: none;
+  border: none;
+  color: inherit;
+  font-family: inherit;
+  font-size: inherit;
+  cursor: pointer;
+  padding: 0;
+  opacity: 1;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+.hero-nav-sep { opacity: 0.4; }
+
+/* ══════════════════════════════════════════
+   CONTENT AREA
+══════════════════════════════════════════ */
+.content { max-width: 860px; margin: 0 auto; padding: 24px 20px 32px; }
+
+/* ══════════════════════════════════════════
+   SECTION TITLE
+══════════════════════════════════════════ */
+.section-title {
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  margin-bottom: 12px;
+  padding-left: 2px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.section-title::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+
+/* ══════════════════════════════════════════
+   CARDS GRID
+══════════════════════════════════════════ */
+.cards-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 12px; margin-bottom: 24px; }
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 18px 20px;
+  cursor: pointer;
+  transition: transform 0.15s, box-shadow 0.15s, border-color 0.15s;
+  position: relative;
+}
+.card:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,0,0,0.08); border-color: var(--border2); }
+[data-theme="dark"] .card:hover { box-shadow: 0 6px 20px rgba(0,0,0,0.4); }
+.card-arrow {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  font-size: 0.8rem;
+  color: var(--text-dim);
+  transition: transform 0.15s;
+}
+.card:hover .card-arrow { transform: translate(2px, -2px); }
+.card-tag { font-size: 0.62rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 8px; }
+.tag-street { color: #856A00; }
+.tag-cafe   { color: var(--vnd); }
+.tag-resto  { color: var(--byn); }
+.tag-free   { color: var(--vnd); }
+.tag-atm    { color: var(--usd); }
+.tag-beach  { color: #1A6B8A; }
+[data-theme="dark"] .tag-beach { color: #5AAFC8; }
+.card-name  { font-size: 0.98rem; font-weight: 700; margin-bottom: 4px; line-height: 1.3; padding-right: 20px; }
+.card-addr  { font-size: 0.76rem; color: var(--text-mid); margin-bottom: 8px; display: flex; align-items: flex-start; gap: 4px; }
+.card-addr::before { content: '📍'; font-size: 0.7rem; flex-shrink: 0; margin-top: 1px; }
+.card-desc  { font-size: 0.78rem; color: var(--text-mid); line-height: 1.5; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+.card-price { display: inline-block; margin-top: 10px; font-size: 0.73rem; font-weight: 600; color: var(--vnd); background: rgba(46,102,68,0.1); padding: 3px 9px; border-radius: 100px; }
+[data-theme="dark"] .card-price { background: rgba(90,175,122,0.15); }
+.card-price.neutral { color: var(--text-mid); background: var(--tag-bg); }
+
+/* ══════════════════════════════════════════
+   DETAIL PAGE
+══════════════════════════════════════════ */
+.detail-hero {
+  background: var(--hero-bg);
+  color: var(--hero-text);
+  padding: 28px 24px 24px;
+  position: relative;
+  overflow: hidden;
+}
+[data-theme="dark"] .detail-hero { background: var(--surface); border-bottom: 1px solid var(--border); }
+.detail-hero::after {
+  content: attr(data-emoji);
+  position: absolute;
+  right: 24px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 5.5rem;
+  opacity: 1;
+  pointer-events: none;
+  filter: drop-shadow(0 4px 16px rgba(0,0,0,0.25));
+}
+.detail-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  margin-bottom: 18px;
+  background: rgba(255,255,255,0.18);
+  border: 1.5px solid rgba(255,255,255,0.35);
+  color: #ffffff;
+  font-family: inherit;
+  cursor: pointer;
+  padding: 9px 18px 9px 13px;
+  border-radius: 100px;
+  backdrop-filter: blur(4px);
+  transition: background 0.15s, border-color 0.15s;
+  -webkit-tap-highlight-color: transparent;
+}
+.detail-back:hover { background: rgba(255,255,255,0.28); border-color: rgba(255,255,255,0.55); }
+[data-theme="dark"] .detail-back { background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.2); color: var(--text); }
+[data-theme="dark"] .detail-back:hover { background: rgba(255,255,255,0.18); }
+.detail-back-arrow {
+  font-size: 1.1rem;
+  line-height: 1;
+}
+.detail-tag { font-size: 0.62rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; opacity: 0.5; margin-bottom: 6px; }
+.detail-name { font-size: clamp(1.3rem, 4vw, 1.9rem); font-weight: 700; letter-spacing: -0.02em; line-height: 1.2; margin-bottom: 6px; }
+.detail-addr-hero { font-size: 0.82rem; opacity: 0.6; display: flex; align-items: center; gap: 5px; }
+
+.detail-content { max-width: 860px; margin: 0 auto; padding: 24px 20px 32px; }
+.detail-desc-block {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 20px;
+  margin-bottom: 16px;
+  font-size: 0.88rem;
+  color: var(--text-mid);
+  line-height: 1.65;
+}
+.detail-meta-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 10px;
+  margin-bottom: 16px;
+}
+.detail-meta-item {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 14px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.detail-meta-label { font-size: 0.62rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-dim); }
+.detail-meta-val { font-size: 0.9rem; font-weight: 600; color: var(--text); }
+.detail-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 24px;
+}
+.btn-action {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 11px 20px;
+  border-radius: 10px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  border: none;
+  cursor: pointer;
+  font-family: inherit;
+  transition: opacity 0.15s;
+  text-decoration: none;
+}
+.btn-action:hover { opacity: 0.85; }
+.btn-primary { background: var(--accent); color: var(--hero-text); }
+[data-theme="dark"] .btn-primary { color: var(--bg); }
+.btn-secondary { background: var(--surface); color: var(--text); border: 1px solid var(--border2); }
+.detail-tips {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 18px 20px;
+  margin-bottom: 16px;
+}
+.detail-tips-title { font-size: 0.68rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-dim); margin-bottom: 12px; }
+.tip-item { font-size: 0.82rem; color: var(--text-mid); line-height: 1.5; padding: 7px 0; border-bottom: 1px solid var(--border); display: flex; gap: 10px; }
+.tip-item:last-child { border-bottom: none; }
+
+/* ══════════════════════════════════════════
+   CONVERTER (page 1)
+══════════════════════════════════════════ */
+.converter-header { text-align: center; padding: 32px 20px 0; max-width: 860px; margin: 0 auto; }
+.conv-eyebrow { font-size: 0.68rem; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: var(--text-dim); margin-bottom: 10px; }
+.conv-title { font-size: clamp(1.6rem, 4.5vw, 2.4rem); font-weight: 700; color: var(--text); line-height: 1.1; letter-spacing: -0.03em; }
+.conv-title em { font-style: normal; color: var(--text-mid); font-weight: 300; }
+.rates-row { display: inline-flex; gap: 0; margin-top: 16px; border: 1px solid var(--border2); border-radius: 8px; overflow: hidden; background: var(--surface); flex-wrap: wrap; justify-content: center; }
+.rate-item { padding: 7px 16px; font-size: 0.76rem; font-weight: 500; color: var(--text-mid); border-right: 1px solid var(--border); }
+.rate-item:last-child { border-right: none; }
+.rate-item b { color: var(--text); font-weight: 600; }
+
+.converter-block { background: var(--surface); border: 1px solid var(--border2); border-radius: 16px; padding: 26px 24px 20px; margin-bottom: 18px; }
+.converter-hint { font-size: 0.76rem; color: var(--text-dim); text-align: center; margin-bottom: 18px; }
+.inputs-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 13px; }
+@media(max-width:560px){ .inputs-grid{ grid-template-columns:1fr; } }
+.field-wrap { display:flex; flex-direction:column; gap:6px; }
+.field-label { font-size:0.68rem; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; }
+.field-label.vnd{ color:var(--vnd); } .field-label.usd{ color:var(--usd); } .field-label.byn{ color:var(--byn); }
+.field-inner{ position:relative; }
+.currency-input { width:100%; border:1.5px solid var(--border); border-radius:10px; padding:12px 12px 12px 52px; font-size:1.1rem; font-family:'Inter',sans-serif; font-weight:600; color:var(--text); background:var(--bg); outline:none; transition:border-color .18s,box-shadow .18s; text-align:right; -moz-appearance:textfield; }
+.currency-input::-webkit-outer-spin-button,.currency-input::-webkit-inner-spin-button{-webkit-appearance:none;}
+.currency-input.vnd:focus{border-color:var(--vnd);box-shadow:0 0 0 3px rgba(46,102,68,0.12);}
+.currency-input.usd:focus{border-color:var(--usd);box-shadow:0 0 0 3px rgba(28,58,107,0.12);}
+.currency-input.byn:focus{border-color:var(--byn);box-shadow:0 0 0 3px rgba(122,35,24,0.12);}
+.field-prefix { position:absolute; left:0; top:0; bottom:0; width:48px; display:flex; align-items:center; justify-content:center; font-size:0.7rem; font-weight:700; letter-spacing:0.04em; border-right:1.5px solid var(--border); pointer-events:none; border-radius:10px 0 0 10px; }
+.field-prefix.vnd{color:var(--vnd);background:rgba(46,102,68,0.07);}
+.field-prefix.usd{color:var(--usd);background:rgba(28,58,107,0.07);}
+.field-prefix.byn{color:var(--byn);background:rgba(122,35,24,0.07);}
+.sync-note{text-align:center;font-size:0.7rem;color:var(--text-dim);margin-top:12px;letter-spacing:0.04em;}
+
+.slider-section{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:20px 24px;margin-bottom:18px;}
+.slider-header{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:12px;flex-wrap:wrap;gap:6px;}
+.slider-title{font-size:0.7rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--text-mid);}
+.slider-display{font-size:1.1rem;font-weight:700;color:var(--text);}
+input[type="range"]{width:100%;accent-color:var(--accent);cursor:pointer;margin-bottom:12px;height:4px;}
+.slider-results{display:flex;gap:10px;flex-wrap:wrap;}
+.slider-pill{flex:1;min-width:100px;text-align:center;padding:10px 12px;border-radius:10px;border:1px solid var(--border);}
+.slider-pill.usd{background:rgba(28,58,107,0.05);}
+.slider-pill.byn{background:rgba(122,35,24,0.05);}
+.slider-pill-label{font-size:0.62rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:4px;color:var(--text-dim);}
+.slider-pill-val{font-size:1rem;font-weight:700;}
+.slider-pill.usd .slider-pill-val{color:var(--usd);}
+.slider-pill.byn .slider-pill-val{color:var(--byn);}
+
+.table-section{margin-bottom:18px;}
+table{width:100%;border-collapse:separate;border-spacing:0;border-radius:14px;overflow:hidden;border:1px solid var(--border);background:var(--surface);}
+thead th{background:var(--accent);color:rgba(255,255,255,0.75);padding:11px 14px;font-size:0.67rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;text-align:right;}
+[data-theme="dark"] thead th{color:rgba(15,13,12,0.75);}
+thead th:first-child{text-align:left;}
+tbody tr{transition:background .12s;cursor:pointer;}
+tbody tr:hover{background:var(--tag-bg)!important;}
+tbody tr:nth-child(odd){background:var(--surface);}
+tbody tr:nth-child(even){background:var(--surface2);}
+tbody tr.highlight{background:rgba(28,58,107,0.07)!important;outline:1.5px solid var(--usd);outline-offset:-1.5px;}
+tbody td{padding:10px 14px;font-size:0.86rem;border-bottom:1px solid var(--border);text-align:right;}
+tbody tr:last-child td{border-bottom:none;}
+tbody td:first-child{text-align:left;font-weight:500;}
+.vnd-col{color:var(--vnd);font-weight:600;}
+.usd-col{color:var(--usd);font-weight:500;}
+.byn-col{color:var(--byn);font-weight:500;}
+.cur-sym{display:inline-block;font-size:0.67rem;font-weight:700;opacity:0.65;margin-right:3px;letter-spacing:0.04em;vertical-align:baseline;}
+.badge{display:inline-block;font-size:0.58rem;font-weight:700;padding:2px 7px;border-radius:100px;margin-left:6px;vertical-align:middle;letter-spacing:0.06em;text-transform:uppercase;background:var(--tag-bg);color:var(--text-mid);}
+
+/* ══════════════════════════════════════════
+   ATM TABLE
+══════════════════════════════════════════ */
+.atm-table{width:100%;border-collapse:separate;border-spacing:0;border-radius:14px;overflow:hidden;border:1px solid var(--border);background:var(--surface);margin-bottom:20px;}
+.atm-table thead th{background:var(--accent);color:rgba(255,255,255,0.75);padding:11px 14px;font-size:0.67rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;text-align:left;}
+[data-theme="dark"] .atm-table thead th{color:rgba(15,13,12,0.75);}
+.atm-table tbody td{padding:11px 14px;font-size:0.84rem;border-bottom:1px solid var(--border);vertical-align:top;}
+.atm-table tbody tr:last-child td{border-bottom:none;}
+.atm-table tbody tr:nth-child(odd){background:var(--surface);}
+.atm-table tbody tr:nth-child(even){background:var(--surface2);}
+.fee-free{color:var(--vnd);font-weight:700;}
+.fee-ok{color:var(--usd);font-weight:600;}
+.fee-high{color:var(--byn);font-weight:600;}
+
+/* Tips box */
+.tips-box{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:18px 20px;margin-bottom:20px;}
+.tips-title{font-size:0.68rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--text-dim);margin-bottom:12px;}
+
+/* Beach cards */
+.beach-card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:18px 20px;margin-bottom:12px;cursor:pointer;transition:transform .15s,border-color .15s;}
+.beach-card:hover{transform:translateY(-2px);border-color:var(--border2);}
+.beach-header{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;flex-wrap:wrap;margin-bottom:8px;}
+.beach-name{font-size:1rem;font-weight:700;}
+.beach-pills{display:flex;gap:6px;flex-wrap:wrap;}
+.beach-pill{font-size:0.6rem;font-weight:700;letter-spacing:0.07em;text-transform:uppercase;padding:3px 9px;border-radius:100px;background:var(--tag-bg);color:var(--text-mid);}
+.beach-pill.crowd-high{background:rgba(122,35,24,0.1);color:var(--byn);}
+.beach-pill.crowd-low{background:rgba(46,102,68,0.1);color:var(--vnd);}
+.beach-pill.crowd-mid{background:rgba(28,58,107,0.1);color:var(--usd);}
+.beach-desc{font-size:0.8rem;color:var(--text-mid);line-height:1.55;}
+.beach-meta{display:flex;gap:14px;margin-top:10px;flex-wrap:wrap;}
+.beach-meta-item{font-size:0.74rem;color:var(--text-mid);display:flex;align-items:center;gap:4px;}
+
+/* ══════════════════════════════════════════
+   LANGUAGE TABLE
+══════════════════════════════════════════ */
+.lang-filter {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 16px;
+}
+.lang-filter-btn {
+  padding: 6px 14px;
+  border-radius: 100px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  border: 1.5px solid var(--border2);
+  background: var(--surface);
+  color: var(--text-mid);
+  cursor: pointer;
+  font-family: inherit;
+  transition: all 0.15s;
+  -webkit-tap-highlight-color: transparent;
+}
+.lang-filter-btn.active { background: var(--accent); color: var(--hero-text); border-color: var(--accent); }
+[data-theme="dark"] .lang-filter-btn.active { color: var(--bg); }
+.lang-search {
+  width: 100%;
+  border: 1.5px solid var(--border);
+  border-radius: 10px;
+  padding: 11px 16px;
+  font-size: 0.9rem;
+  font-family: inherit;
+  color: var(--text);
+  background: var(--surface);
+  outline: none;
+  margin-bottom: 16px;
+  transition: border-color 0.18s;
+}
+.lang-search:focus { border-color: var(--border2); }
+.lang-search::placeholder { color: var(--text-dim); }
+.lang-table { width: 100%; border-collapse: separate; border-spacing: 0; border-radius: 14px; overflow: hidden; border: 1px solid var(--border); background: var(--surface); }
+.lang-table thead th { background: var(--accent); color: rgba(255,255,255,0.75); padding: 11px 16px; font-size: 0.67rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; text-align: left; }
+[data-theme="dark"] .lang-table thead th { color: rgba(15,13,12,0.75); }
+.lang-table tbody td { padding: 10px 16px; font-size: 0.86rem; border-bottom: 1px solid var(--border); vertical-align: middle; }
+.lang-table tbody tr:last-child td { border-bottom: none; }
+.lang-table tbody tr:nth-child(odd) { background: var(--surface); }
+.lang-table tbody tr:nth-child(even) { background: var(--surface2); }
+.lang-table tbody tr { transition: background 0.12s; }
+.lang-table tbody tr:hover { background: var(--tag-bg) !important; }
+.lang-table .col-viet { font-weight: 700; color: var(--vnd); }
+.lang-table .col-trans { color: var(--text-mid); font-style: italic; font-size: 0.82rem; }
+.lang-table .col-ru { font-weight: 500; }
+.lang-cat-row td { background: var(--tag-bg) !important; font-size: 0.65rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-dim); padding: 7px 16px; }
+.hidden-row { display: none; }
+
+/* ══════════════════════════════════════════
+   FOOTNOTE
+══════════════════════════════════════════ */
+.footnote{text-align:center;font-size:0.72rem;color:var(--text-dim);margin-top:6px;padding-bottom:4px;}
+
+/* ══════════════════════════════════════════
+   BOTTOM TAB BAR
+══════════════════════════════════════════ */
+.tab-bar{position:fixed;bottom:0;left:0;right:0;height:var(--tab-h);background:var(--surface);border-top:1px solid var(--border2);display:flex;z-index:100;box-shadow:0 -2px 12px rgba(0,0,0,0.06);}
+.tab-btn{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;background:none;border:none;cursor:pointer;font-family:'Inter',sans-serif;color:var(--text-dim);transition:color .15s;padding:0 4px;-webkit-tap-highlight-color:transparent;}
+.tab-btn.active{color:var(--accent);}
+.tab-icon{font-size:1.25rem;line-height:1;}
+.tab-label{font-size:0.58rem;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;}
+.tab-btn.active .tab-label{font-weight:700;}
+</style>
+</head>
+<body>
+
+<!-- ════════ TOP BAR ════════ -->
+<div class="top-bar">
+  <div class="top-bar-left">
+    <div class="top-logo">🇻🇳</div>
+    <span class="top-title">Валютный конвертер · Дананг</span>
+  </div>
+  <label class="theme-toggle" title="Сменить тему">
+    <span class="toggle-icon">☀️</span>
+    <div class="toggle-track"><div class="toggle-thumb"></div></div>
+    <span class="toggle-icon">🌙</span>
+    <input type="checkbox" id="theme-checkbox" style="display:none">
+  </label>
+</div>
+
+<!-- ════════════════════════════════════════
+     PAGE: КОНВЕРТЕР
+════════════════════════════════════════ -->
+<div class="page active" id="page-converter">
+  <div class="converter-header">
+    <div class="conv-eyebrow">Вьетнамский донг</div>
+    <div class="conv-title">Конвертер <em>/ VND</em></div>
+    <div class="rates-row">
+      <div class="rate-item">6 марта 2026</div>
+      <div class="rate-item">1 USD = <b>26 200</b> VND</div>
+      <div class="rate-item">1 BYN = <b>9 129</b> VND</div>
+    </div>
+  </div>
+  <div class="content" style="padding-top:20px;">
+    <div class="converter-block">
+      <div class="converter-hint">Введите сумму в любой валюте — остальные пересчитаются</div>
+      <div class="inputs-grid">
+        <div class="field-wrap">
+          <div class="field-label vnd">VND — Донг</div>
+          <div class="field-inner">
+            <span class="field-prefix vnd">VND</span>
+            <input class="currency-input vnd" id="inp-vnd" type="number" value="100000" min="0" step="1000">
+          </div>
+        </div>
+        <div class="field-wrap">
+          <div class="field-label usd">USD — Доллар</div>
+          <div class="field-inner">
+            <span class="field-prefix usd">USD</span>
+            <input class="currency-input usd" id="inp-usd" type="number" min="0" step="0.01">
+          </div>
+        </div>
+        <div class="field-wrap">
+          <div class="field-label byn">BYN — Рубль</div>
+          <div class="field-inner">
+            <span class="field-prefix byn">BYN</span>
+            <input class="currency-input byn" id="inp-byn" type="number" min="0" step="0.01">
+          </div>
+        </div>
+      </div>
+      <div class="sync-note">↔ все три поля синхронизированы</div>
+    </div>
+    <div class="slider-section">
+      <div class="slider-header">
+        <span class="slider-title">Ползунок · VND</span>
+        <span class="slider-display" id="slider-vnd">500 000 VND</span>
+      </div>
+      <input type="range" id="vnd-slider" min="10000" max="5000000" step="10000" value="500000">
+      <div class="slider-results">
+        <div class="slider-pill usd"><div class="slider-pill-label">USD</div><div class="slider-pill-val" id="slider-usd">—</div></div>
+        <div class="slider-pill byn"><div class="slider-pill-label">BYN</div><div class="slider-pill-val" id="slider-byn">—</div></div>
+      </div>
+    </div>
+    <div class="table-section">
+      <div class="section-title">Круглые суммы</div>
+      <table id="conversion-table">
+        <thead><tr><th style="text-align:left">VND</th><th>USD</th><th>BYN</th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+    <div class="table-section">
+      <div class="section-title">Типичные цены в Дананге</div>
+      <table id="prices-table">
+        <thead><tr><th>Товар / услуга</th><th>VND</th><th>USD</th><th>BYN</th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+    <p class="footnote">Курс на 6 марта 2026 · 1 USD ≈ 26 200 VND · 1 USD ≈ 2.87 BYN</p>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════
+     PAGE: ГДЕ ПОЕСТЬ
+════════════════════════════════════════ -->
+<div class="page" id="page-food">
+  <div class="section-hero" data-emoji="🍜">
+    <div class="hero-eyebrow">Дананг · Гастрономия</div>
+    <div class="hero-title">Где поесть</div>
+    <div class="hero-sub">Лучшие места по категориям — уличная еда, кафе и рестораны Дананга</div>
+    <div class="hero-stats">
+      <div class="hero-stat"><div class="hero-stat-val">18</div><div class="hero-stat-label">заведений</div></div>
+      <div class="hero-stat"><div class="hero-stat-val">15 тыс</div><div class="hero-stat-label">от, VND</div></div>
+      <div class="hero-stat"><div class="hero-stat-val">3</div><div class="hero-stat-label">категории</div></div>
+    </div>
+  </div>
+  <div class="content">
+    <div class="section-title">Уличная еда</div>
+    <div class="cards-grid" id="food-street"></div>
+    <div class="section-title">Кафе</div>
+    <div class="cards-grid" id="food-cafe"></div>
+    <div class="section-title">Рестораны</div>
+    <div class="cards-grid" id="food-resto"></div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════
+     PAGE: КОВОРКИНГИ
+════════════════════════════════════════ -->
+<div class="page" id="page-cowork">
+  <div class="section-hero" data-emoji="💻">
+    <div class="hero-eyebrow">Дананг · Работа</div>
+    <div class="hero-title">Бесплатные коворкинги</div>
+    <div class="hero-sub">Кафе и пространства где можно работать с ноутбуком за цену кофе</div>
+    <div class="hero-stats">
+      <div class="hero-stat"><div class="hero-stat-val">6</div><div class="hero-stat-label">мест</div></div>
+      <div class="hero-stat"><div class="hero-stat-val">0 VND</div><div class="hero-stat-label">вход</div></div>
+      <div class="hero-stat"><div class="hero-stat-val">24/7</div><div class="hero-stat-label">почти везде</div></div>
+    </div>
+  </div>
+  <div class="content">
+    <div class="section-title">Места для работы</div>
+    <div class="cards-grid" id="cowork-cards"></div>
+    <div class="tips-box">
+      <div class="tips-title">Негласные правила кафе в Дананге</div>
+      <div class="tip-item"><span>☕</span>Всегда заказывай хотя бы что-то — не будь тем, кто сидит весь день за стаканом воды.</div>
+      <div class="tip-item"><span>📐</span>Не занимай стол на 4 персоны в одиночку в час-пик.</div>
+      <div class="tip-item"><span>🎧</span>Длинные Zoom-созвоны — только в наушниках или на улице.</div>
+      <div class="tip-item"><span>🔌</span>Розетки — под столом или вдоль стен. Свой удлинитель — суперсила.</div>
+      <div class="tip-item"><span>💧</span>Бесплатный долив воды — просто попроси.</div>
+      <div class="tip-item"><span>📶</span>Пароль Wi-Fi — на чеке или у персонала.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════
+     PAGE: БАНКОМАТЫ
+════════════════════════════════════════ -->
+<div class="page" id="page-atm">
+  <div class="section-hero" data-emoji="🏧">
+    <div class="hero-eyebrow">Дананг · Деньги</div>
+    <div class="hero-title">Банкоматы</div>
+    <div class="hero-sub">Какие банки берут меньше комиссии, где найти банкоматы и как не потерять деньги</div>
+    <div class="hero-stats">
+      <div class="hero-stat"><div class="hero-stat-val">3</div><div class="hero-stat-label">банка без комиссии</div></div>
+      <div class="hero-stat"><div class="hero-stat-val">5 млн</div><div class="hero-stat-label">макс. за раз, VND</div></div>
+    </div>
+  </div>
+  <div class="content">
+    <div class="section-title">Комиссии банков (иностранные карты)</div>
+    <table class="atm-table">
+      <thead><tr><th>Банк</th><th>Комиссия</th><th>Лимит</th><th>Примечание</th></tr></thead>
+      <tbody>
+        <tr><td><strong>VPBank</strong></td><td><span class="fee-free">0 VND ✓</span></td><td>5 000 000</td><td>Лучший выбор</td></tr>
+        <tr><td><strong>ACB</strong></td><td><span class="fee-free">0 VND ✓</span></td><td>3 000 000</td><td>Проверено</td></tr>
+        <tr><td><strong>Eximbank</strong></td><td><span class="fee-free">0 VND ✓</span></td><td>3 000 000</td><td>Меньше банкоматов</td></tr>
+        <tr><td><strong>Sacombank</strong></td><td><span class="fee-ok">~45 000</span></td><td>5 000 000</td><td>Высокий лимит</td></tr>
+        <tr><td><strong>BIDV</strong></td><td><span class="fee-ok">~50 000</span></td><td>5 000 000</td><td>Много банкоматов</td></tr>
+        <tr><td><strong>Vietcombank</strong></td><td><span class="fee-ok">~50 000</span></td><td>5 000 000</td><td>Хороший курс</td></tr>
+        <tr><td><strong>TPBank</strong></td><td><span class="fee-high">~3.3% ✗</span></td><td>5 000 000</td><td>Самый дорогой!</td></tr>
+        <tr><td><strong>HSBC</strong></td><td><span class="fee-ok">~50 000</span></td><td>2 000 000</td><td>Лучший в аэропорту</td></tr>
+      </tbody>
+    </table>
+    <div class="section-title">Где найти банкоматы</div>
+    <div class="cards-grid" id="atm-cards"></div>
+    <div class="tips-box">
+      <div class="tips-title">Важные советы</div>
+      <div class="tip-item"><span>❌</span><span><strong>Всегда выбирай «Charge in VND»</strong> — банкомат предложит свой невыгодный курс.</span></div>
+      <div class="tip-item"><span>💵</span>Снимай большими суммами — при фиксированной комиссии 50 000 VND выгоднее снять 5 млн за раз.</div>
+      <div class="tip-item"><span>✈️</span>В аэропорту — используй HSBC. Избегай TP Bank.</div>
+      <div class="tip-item"><span>🎊</span>Перед Тет (вьетнамский Новый год) сними деньги с запасом — банкоматы опустошаются.</div>
+      <div class="tip-item"><span>💳</span>Уличная еда и рынки — только наличные.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════
+     PAGE: ПЛЯЖИ
+════════════════════════════════════════ -->
+<div class="page" id="page-beach">
+  <div class="section-hero" data-emoji="🏖️">
+    <div class="hero-eyebrow">Дананг · Пляжи</div>
+    <div class="hero-title">Пляжи Дананга</div>
+    <div class="hero-sub">Лучший сезон: апрель — август · Сезон дождей: октябрь — декабрь</div>
+    <div class="hero-stats">
+      <div class="hero-stat"><div class="hero-stat-val">4</div><div class="hero-stat-label">пляжа</div></div>
+      <div class="hero-stat"><div class="hero-stat-val">35 км</div><div class="hero-stat-label">береговая линия</div></div>
+      <div class="hero-stat"><div class="hero-stat-val">28°C</div><div class="hero-stat-label">вода летом</div></div>
+    </div>
+  </div>
+  <div class="content">
+    <div class="section-title">Пляжи</div>
+    <div id="beach-cards"></div>
+    <div class="tips-box">
+      <div class="tips-title">Советы</div>
+      <div class="tip-item"><span>🕐</span>Лучшее время — до 9:00 или после 16:00: нежарко, красивый свет.</div>
+      <div class="tip-item"><span>🚩</span>Следи за флагами: красный — запрещено, жёлтый — осторожно, зелёный — безопасно.</div>
+      <div class="tip-item"><span>🛵</span>Grab до My Khe из An Thuong — 5–10 мин, 25–40 тыс. VND.</div>
+      <div class="tip-item"><span>🩴</span>SPF 50+, головной убор — обязательно. Вьетнамское солнце очень агрессивно.</div>
+    </div>
+    <p class="footnote">Лучший сезон: апрель – август · Сезон волн: сентябрь – декабрь</p>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════
+     PAGE: ВЬЕТНАМСКИЙ ЯЗЫК
+════════════════════════════════════════ -->
+<div class="page" id="page-lang">
+  <div class="section-hero" data-emoji="🗣️">
+    <div class="hero-eyebrow">Дананг · Язык</div>
+    <div class="hero-title">Вьетнамский язык</div>
+    <div class="hero-sub">100 самых нужных слов и фраз с транскрипцией и переводом</div>
+    <div class="hero-stats">
+      <div class="hero-stat"><div class="hero-stat-val">100</div><div class="hero-stat-label">слов и фраз</div></div>
+      <div class="hero-stat"><div class="hero-stat-val">10</div><div class="hero-stat-label">категорий</div></div>
+    </div>
+  </div>
+  <div class="content">
+    <input class="lang-search" id="lang-search" type="text" placeholder="Поиск по слову или переводу...">
+    <div class="lang-filter" id="lang-filter"></div>
+    <div class="section-title">Словарь</div>
+    <table class="lang-table">
+      <thead><tr><th>Вьетнамский</th><th>Транскрипция</th><th>Русский</th></tr></thead>
+      <tbody id="lang-tbody"></tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════
+     DETAIL PAGE (single)
+════════════════════════════════════════ -->
+<div class="detail-page" id="detail-page">
+  <div class="detail-hero" id="detail-hero" data-emoji="📍">
+    <button class="detail-back" id="detail-back"><span class="detail-back-arrow">←</span> Назад</button>
+    <div class="detail-tag" id="detail-tag"></div>
+    <div class="detail-name" id="detail-name"></div>
+    <div class="detail-addr-hero">📍 <span id="detail-addr"></span></div>
+  </div>
+  <div class="detail-content">
+    <div class="detail-actions" id="detail-actions"></div>
+    <div class="section-title">Описание</div>
+    <div class="detail-desc-block" id="detail-desc"></div>
+    <div class="detail-meta-grid" id="detail-meta"></div>
+    <div class="detail-tips" id="detail-tips-wrap" style="display:none">
+      <div class="detail-tips-title">Советы</div>
+      <div id="detail-tips"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════
+     BOTTOM TAB BAR
+════════════════════════════════════════ -->
+<nav class="tab-bar">
+  <button class="tab-btn active" data-page="page-converter" onclick="switchTab(this)"><span class="tab-icon">💱</span><span class="tab-label">Конвертер</span></button>
+  <button class="tab-btn" data-page="page-food" onclick="switchTab(this)"><span class="tab-icon">🍜</span><span class="tab-label">Поесть</span></button>
+  <button class="tab-btn" data-page="page-cowork" onclick="switchTab(this)"><span class="tab-icon">💻</span><span class="tab-label">Коворкинг</span></button>
+  <button class="tab-btn" data-page="page-atm" onclick="switchTab(this)"><span class="tab-icon">🏧</span><span class="tab-label">Банкоматы</span></button>
+  <button class="tab-btn" data-page="page-beach" onclick="switchTab(this)"><span class="tab-icon">🏖️</span><span class="tab-label">Пляжи</span></button>
+  <button class="tab-btn" data-page="page-lang" onclick="switchTab(this)"><span class="tab-icon">🗣️</span><span class="tab-label">Язык</span></button>
+</nav>
+
+<script>
+/* ══════════════════════════════════════
+   DARK MODE
+══════════════════════════════════════ */
+const themeCheckbox = document.getElementById('theme-checkbox');
+const saved = localStorage.getItem('theme');
+if (saved === 'dark') { document.documentElement.setAttribute('data-theme','dark'); themeCheckbox.checked = true; }
+themeCheckbox.addEventListener('change', () => {
+  const t = themeCheckbox.checked ? 'dark' : 'light';
+  document.documentElement.setAttribute('data-theme', t);
+  localStorage.setItem('theme', t);
+});
+
+/* ══════════════════════════════════════
+   TAB NAVIGATION
+══════════════════════════════════════ */
+let currentTab = 'page-converter';
+function switchTab(btn) {
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById('detail-page').classList.remove('active');
+  btn.classList.add('active');
+  currentTab = btn.dataset.page;
+  document.getElementById(currentTab).classList.add('active');
+  window.scrollTo({ top:0, behavior:'smooth' });
+}
+
+/* ══════════════════════════════════════
+   DETAIL PAGE
+══════════════════════════════════════ */
+function openDetail(item) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  const dp = document.getElementById('detail-page');
+  dp.classList.add('active');
+
+  document.getElementById('detail-hero').setAttribute('data-emoji', item.emoji || '📍');
+  document.getElementById('detail-tag').textContent = item.tag || '';
+  document.getElementById('detail-name').textContent = item.name;
+  document.getElementById('detail-addr').textContent = item.addr;
+  document.getElementById('detail-desc').textContent = item.fullDesc || item.desc;
+
+  // Meta
+  const metaGrid = document.getElementById('detail-meta');
+  metaGrid.innerHTML = '';
+  (item.meta || []).forEach(m => {
+    metaGrid.innerHTML += `<div class="detail-meta-item"><div class="detail-meta-label">${m.label}</div><div class="detail-meta-val">${m.val}</div></div>`;
+  });
+
+  // Actions
+  const actions = document.getElementById('detail-actions');
+  actions.innerHTML = '';
+  if (item.maps) {
+    actions.innerHTML += `<a class="btn-action btn-primary" href="${item.maps}" target="_blank">🗺️ Открыть в Google Maps</a>`;
+  }
+  if (item.site) {
+    actions.innerHTML += `<a class="btn-action btn-secondary" href="${item.site}" target="_blank">🌐 Сайт</a>`;
+  }
+
+  // Tips
+  const tipsWrap = document.getElementById('detail-tips-wrap');
+  const tipsDiv = document.getElementById('detail-tips');
+  if (item.tips && item.tips.length) {
+    tipsDiv.innerHTML = item.tips.map(t => `<div class="tip-item"><span>${t.icon}</span><span>${t.text}</span></div>`).join('');
+    tipsWrap.style.display = 'block';
+  } else {
+    tipsWrap.style.display = 'none';
+  }
+
+  window.scrollTo({ top:0, behavior:'smooth' });
+}
+
+document.getElementById('detail-back').addEventListener('click', () => {
+  document.getElementById('detail-page').classList.remove('active');
+  document.getElementById(currentTab).classList.add('active');
+  window.scrollTo({ top:0, behavior:'smooth' });
+});
+
+/* ══════════════════════════════════════
+   DATA: FOOD
+══════════════════════════════════════ */
+const foodData = {
+  street: [
+    { name:'Bánh Xèo Bà Dưỡng', tag:'Уличная еда', addr:'23 Hoàng Diệu, Hải Châu', desc:'Легендарный адрес для bánh xèo — хрустящие рисовые блины с креветками.', fullDesc:'Легендарный адрес для bánh xèo — хрустящие рисовые блины с креветками, свининой и зеленью. Всегда очередь из местных жителей. Считается одним из лучших мест для этого блюда во всём Дананге. Открыты с раннего утра до полудня — приходи пораньше.', price:'40–60 тыс. VND', emoji:'🥞', maps:'https://maps.google.com/?q=Banh+Xeo+Ba+Duong+Da+Nang', meta:[{label:'Часы работы',val:'07:00–12:00'},{label:'Средний чек',val:'40–60 тыс. VND'},{label:'Кухня',val:'Вьетнамская'},{label:'Оплата',val:'Только наличные'}], tips:[{icon:'⏰',text:'Приходи до 10 утра — после полудня всё заканчивается.'},{icon:'💵',text:'Только наличные VND, карты не принимают.'}] },
+    { name:'Mì Quảng 1A', tag:'Уличная еда', addr:'1 Hải Phòng, Hải Châu', desc:'Мыкуанг — главное блюдо Дананга: turmeric-лапша с креветками и яйцами.', fullDesc:'Мыкуанг — визитная карточка кухни Дананга. Turmeric-лапша с креветками, свининой, перепелиными яйцами, рисовым крекером и свежей зеленью. Адрес 1A считается культовым — сюда специально едут из других районов. Порции большие, вкус насыщенный.', price:'35–55 тыс. VND', emoji:'🍜', maps:'https://maps.google.com/?q=Mi+Quang+1A+Da+Nang', meta:[{label:'Часы работы',val:'06:30–13:00'},{label:'Средний чек',val:'35–55 тыс. VND'},{label:'Кухня',val:'Вьетнамская, Дананг'},{label:'Оплата',val:'Только наличные'}], tips:[{icon:'🌿',text:'Не стесняйся брать зелень и специи со стола — это входит в цену.'},{icon:'🪑',text:'Места на низких пластиковых стульях — часть опыта.'}] },
+    { name:'Bánh Mì Cô Tiên', tag:'Уличная еда', addr:'Район An Thuong, Ngũ Hành Sơn', desc:'Один из лучших баньми в городе — хрустящий багет с паштетом и свининой.', fullDesc:'Один из лучших баньми в Дананге — хрустящий вьетнамский багет с печёночным паштетом, жареной свининой, маринованной морковью и свежим кориандром. Работает с раннего утра, очередь выстраивается быстро. Идеально для завтрака на ходу.', price:'20–30 тыс. VND', emoji:'🥖', maps:'https://maps.google.com/?q=Banh+Mi+Co+Tien+An+Thuong+Da+Nang', meta:[{label:'Часы работы',val:'06:00–11:00'},{label:'Средний чек',val:'20–30 тыс. VND'},{label:'Тип',val:'Стрит-фуд'},{label:'Оплата',val:'Только наличные'}], tips:[{icon:'🌶️',text:'Скажи «không cay» (кхонг кай) если не хочешь острого.'}] },
+    { name:'Bún Chả Cá Hòn', tag:'Уличная еда', addr:'Район My An, Ngũ Hành Sơn', desc:'Суп-лапша с рыбными котлетами — кислый, сладкий, пряный бульон.', fullDesc:'Специализация — bún chả cá: рисовая лапша с вьетнамскими рыбными котлетами в насыщенном кисло-сладко-пряном бульоне. Типичный завтрак жителей Дананга. Всегда полно местных — верный признак качества. Порции большие.', price:'40–60 тыс. VND', emoji:'🍲', maps:'https://maps.google.com/?q=Bun+Cha+Ca+Da+Nang', meta:[{label:'Часы работы',val:'06:00–12:00'},{label:'Средний чек',val:'40–60 тыс. VND'},{label:'Кухня',val:'Морская, Дананг'},{label:'Оплата',val:'Только наличные'}] },
+  ],
+  cafe: [
+    { name:'Gozar Coffee', tag:'Кафе', addr:'An Thuong, Ngũ Hành Sơn', desc:'Топ кафе для работы — тихий этаж для ноутбуков, сильный Wi-Fi, хороший кофе.', fullDesc:'Главное кафе номадского района An Thuong. Отдельный тихий этаж специально для людей с ноутбуками, сильный Wi-Fi, розетки у каждого стола, бесплатная вода. Хороший вьетнамский кофе и полноценное меню еды. Центр жизни цифровых кочевников Дананга.', price:'45–80 тыс. VND', emoji:'☕', maps:'https://maps.google.com/?q=Gozar+Coffee+An+Thuong+Da+Nang', site:'https://www.facebook.com/gozarcoffee', meta:[{label:'Wi-Fi',val:'Сильный, стабильный'},{label:'Розетки',val:'У каждого стола'},{label:'Часы работы',val:'07:00–22:00'},{label:'Средний чек',val:'45–80 тыс. VND'}], tips:[{icon:'💻',text:'Рабочий этаж — на 2-м уровне, поднимись по лестнице.'},{icon:'🔌',text:'Возьми свой удлинитель в час-пик.'}] },
+    { name:'I Vegan (3-й этаж)', tag:'Кафе · Веган', addr:'An Thuong, Ngũ Hành Sơn', desc:'Единственное кафе с полноценным бесплатным коворкингом на 3-м этаже.', fullDesc:'Единственное кафе в Дананге с полноценным выделенным коворкинг-пространством на 3-м этаже — бесплатно при условии покупки. Веганская еда отличного качества, стабильный Wi-Fi, кондиционер, много розеток. Популярно среди местных номадов и цифровых кочевников.', price:'50–100 тыс. VND', emoji:'🌱', maps:'https://maps.google.com/?q=I+Vegan+An+Thuong+Da+Nang', meta:[{label:'Wi-Fi',val:'Стабильный'},{label:'Коворкинг',val:'3-й этаж, бесплатно'},{label:'Кухня',val:'Веганская'},{label:'Часы работы',val:'08:00–21:00'}], tips:[{icon:'🌿',text:'Попробуй авокадо-тост или сезонный смузи — готовят отлично.'},{icon:'🪜',text:'Лифта нет — коворкинг только на 3-м этаже по лестнице.'}] },
+    { name:'Roots Plant-Based Cafe', tag:'Кафе · Healthy', addr:'An Thuong', desc:'Смузи-боулы, тосты, несколько роутеров, всегда быстрый интернет.', fullDesc:'Популярное кафе здоровой еды в центре номадского района. Смузи-боулы, тосты с авокадо, протеиновые блюда и отличный кофе. Несколько Wi-Fi роутеров — сигнал ловит даже на улице. Много розеток, персонал дружелюбный к работающим гостям.', price:'60–120 тыс. VND', emoji:'🥑', maps:'https://maps.google.com/?q=Roots+Plant+Based+Cafe+Da+Nang', meta:[{label:'Wi-Fi',val:'Несколько роутеров'},{label:'Кухня',val:'Здоровая еда'},{label:'Часы работы',val:'07:30–21:00'},{label:'Средний чек',val:'60–120 тыс. VND'}] },
+    { name:'XLIII Specialty Coffee', tag:'Кафе · Specialty', addr:'Район An Thuong', desc:'Минималистичное пространство для ценителей specialty кофе.', fullDesc:'Камерное specialty-кафе для тех, кто серьёзно относится к кофе. Минималистичный интерьер, хороший эспрессо и фильтр из отборных зёрен. Тихо и спокойно — хорошее место для работы в одиночестве или короткой встречи.', price:'55–90 тыс. VND', emoji:'☕', maps:'https://maps.google.com/?q=XLIII+Coffee+Da+Nang', meta:[{label:'Кофе',val:'Specialty, эспрессо, фильтр'},{label:'Атмосфера',val:'Тихая, минималистичная'},{label:'Часы работы',val:'08:00–21:00'},{label:'Средний чек',val:'55–90 тыс. VND'}] },
+  ],
+  resto: [
+    { name:'Madame Lan', tag:'Ресторан · Вьетнамский', addr:'1 Hải Phòng, у рынка Хан', desc:'Элегантный ресторан у реки Хан. Аутентичная вьетнамская кухня, красивая подача.', fullDesc:'Один из лучших ресторанов вьетнамской кухни в Дананге. Расположен у реки Хан в историческом здании. Аутентичные блюда с красивой подачей: гриль, фо, морепродукты и местные специалитеты. Хорошее обслуживание, английское меню, подходит для романтического ужина.', price:'150–350 тыс. VND', emoji:'🏮', maps:'https://maps.google.com/?q=Madame+Lan+Da+Nang', site:'http://www.madamelan.vn', meta:[{label:'Кухня',val:'Вьетнамская'},{label:'Часы работы',val:'10:00–22:00'},{label:'Средний чек',val:'150–350 тыс. VND'},{label:'Бронь',val:'Рекомендуется'}], tips:[{icon:'🌅',text:'Попроси столик с видом на реку — особенно красиво вечером.'},{icon:'📖',text:'Есть английское меню с фотографиями.'}] },
+    { name:'Bé Mặn Seafood', tag:'Ресторан · Морепродукты', addr:'Bãi biển Mỹ Khê', desc:'Свежие морепродукты прямо у пляжа Мыкхе — живые крабы, лобстеры, кальмары.', fullDesc:'Ресторан морепродуктов прямо на пляже My Khe. Живые крабы, лобстеры, креветки, кальмары на гриле и морские ежи — всё свежее. Цены зависят от веса и сезона. Обязательно уточни стоимость до заказа. Посмотри на дату улова — спроси официанта.', price:'200–600 тыс. VND', emoji:'🦀', maps:'https://maps.google.com/?q=Be+Man+Seafood+My+Khe+Da+Nang', meta:[{label:'Кухня',val:'Морепродукты'},{label:'Расположение',val:'Пляж My Khe'},{label:'Часы работы',val:'10:00–22:00'},{label:'Средний чек',val:'200–600 тыс. VND'}], tips:[{icon:'⚖️',text:'Цена — за вес. Уточняй стоимость краба/лобстера до того как его приготовят.'},{icon:'🌊',text:'Лучший выбор морепродуктов — к обеду, когда свежий улов.'}] },
+    { name:'Tacos Da Nang', tag:'Ресторан · Мексиканский', addr:'41 Nguyễn Thị Sỹ, My An', desc:'Буррито, начос — лучшее место если хочется чего-то не вьетнамского.', fullDesc:'Лучшее нон-вьетнамское место в Дананге. Настоящие буррито, тако, начос и острые соусы. Работает до позднего вечера — спасение когда все локальные заведения уже закрыты. Популярно среди экспатов и долгосрочных путешественников. Умеренные цены.', price:'120–220 тыс. VND', emoji:'🌮', maps:'https://maps.google.com/?q=Tacos+Da+Nang', meta:[{label:'Кухня',val:'Мексиканская'},{label:'Часы работы',val:'11:00–23:30'},{label:'Средний чек',val:'120–220 тыс. VND'},{label:'Оплата',val:'Карта и наличные'}] },
+    { name:'Le Rendez Vous', tag:'Ресторан · Французский', addr:'72/17 Nguyễn Văn Thoại', desc:'Дегустационные меню с фуа-гра. Лучший адрес для особого ужина.', fullDesc:'Лучший ресторан высокой кухни в Дананге. Дегустационные меню с фуа-гра, омаром и трюфелем в элегантной, но не помпезной обстановке. Французские техники и вьетнамские ингредиенты. Идеально для особого ужина или деловой встречи. Бронь обязательна.', price:'500–1200 тыс. VND', emoji:'🍷', maps:'https://maps.google.com/?q=Le+Rendez+Vous+Da+Nang', meta:[{label:'Кухня',val:'Французская / Fusion'},{label:'Часы работы',val:'18:00–22:30'},{label:'Средний чек',val:'500–1200 тыс. VND'},{label:'Бронь',val:'Обязательна'}], tips:[{icon:'👔',text:'Дресс-код — smart casual. Шорты и шлёпанцы не приветствуются.'},{icon:'📞',text:'Бронируй за 2–3 дня, особенно на выходные.'}] },
+  ]
+};
+
+/* ══════════════════════════════════════
+   DATA: COWORK
+══════════════════════════════════════ */
+const coworkData = [
+  { name:'I Vegan (3-й этаж)', tag:'Бесплатно · Кафе', addr:'An Thuong, Ngũ Hành Sơn', desc:'Единственное кафе с полноценным бесплатным коворкингом.', fullDesc:'Единственное кафе в Дананге с выделенным бесплатным коворкинг-этажом. На 3-м этаже — просторный open-space, много розеток, кондиционер, стабильный Wi-Fi. Веганская еда отличного качества. Правило: купи что-нибудь и можно сидеть весь день.', price:'Бесплатно (за покупку)', emoji:'🌱', maps:'https://maps.google.com/?q=I+Vegan+An+Thuong+Da+Nang', meta:[{label:'Wi-Fi',val:'Стабильный'},{label:'Этаж',val:'3-й, открытое пространство'},{label:'Часы работы',val:'08:00–21:00'},{label:'Кухня',val:'Веганская'}], tips:[{icon:'🪜',text:'Лифта нет — только лестница на 3-й этаж.'},{icon:'☕',text:'Минимальный заказ — 1 напиток. Вода бесплатна на долив.'}] },
+  { name:'Gozar Coffee', tag:'Бесплатно · Кафе', addr:'An Thuong', desc:'Тихий этаж для ноутбуков, сильный Wi-Fi, розетки у каждого стола.', fullDesc:'Главный номадский хаб района An Thuong. Отдельный этаж для работы с ноутбуком, Wi-Fi с несколькими точками доступа, розетка у каждого места. Хороший вьетнамский кофе и еда. Персонал привык к людям с ноутбуками и не торопит.', price:'Бесплатно (за покупку)', emoji:'☕', maps:'https://maps.google.com/?q=Gozar+Coffee+An+Thuong+Da+Nang', site:'https://www.facebook.com/gozarcoffee', meta:[{label:'Wi-Fi',val:'Сильный, стабильный'},{label:'Розетки',val:'У каждого стола'},{label:'Кухня',val:'Кофе + еда'},{label:'Часы работы',val:'07:00–22:00'}], tips:[{icon:'🎧',text:'2-й этаж — тихая зона для работы.'},{icon:'📶',text:'Пароль Wi-Fi меняется ежедневно, есть на чеке.'}] },
+  { name:'Roots Plant-Based Cafe', tag:'Бесплатно · Кафе', addr:'An Thuong', desc:'Несколько роутеров, всегда быстрый интернет, много розеток.', fullDesc:'Популярное кафе здоровой еды с отличной рабочей инфраструктурой. Несколько Wi-Fi роутеров по всему залу — сигнал ловит даже у входа. Много розеток, удобные стулья. Персонал дружелюбен к работающим гостям. Хорошие смузи и здоровая еда.', price:'Бесплатно (за покупку)', emoji:'🥑', maps:'https://maps.google.com/?q=Roots+Cafe+Da+Nang', meta:[{label:'Wi-Fi',val:'Несколько роутеров'},{label:'Кухня',val:'Здоровая, веганские опции'},{label:'Часы работы',val:'07:30–21:00'},{label:'Атмосфера',val:'Светлая, просторная'}] },
+  { name:'DNG Coffee', tag:'Бесплатно · Кафе', addr:'Центр города, Hải Châu', desc:'Просторный индустриальный интерьер, сильный Wi-Fi, удобные кресла.', fullDesc:'Просторное кафе в индустриальном стиле в центре Дананга. Высокие потолки, удобные кресла, сильный Wi-Fi и английский завтрак в меню. Менее туристическое чем кафе района An Thuong — больше местных профессионалов и студентов.', price:'Бесплатно (за покупку)', emoji:'🏭', maps:'https://maps.google.com/?q=DNG+Coffee+Da+Nang', meta:[{label:'Wi-Fi',val:'Сильный'},{label:'Интерьер',val:'Индустриальный'},{label:'Часы работы',val:'07:00–21:00'},{label:'Кухня',val:'Кофе + завтраки'}] },
+  { name:'Lighthouse Cafe', tag:'Бесплатно · Кафе', addr:'54 An Thượng 2', desc:'Многоуровневое кафе у пляжа, стало ориентиром для номадов.', fullDesc:'Многоуровневое кафе в самом сердце номадского района An Thuong, в 5 минутах от пляжа My Khe. Стало ориентиром для цифровых кочевников благодаря сильному Wi-Fi, розеткам на каждом этаже и атмосфере в которой можно сидеть часами. Красивый вид с верхнего этажа.', price:'Бесплатно (за покупку)', emoji:'🏠', maps:'https://maps.google.com/?q=Lighthouse+Cafe+An+Thuong+Da+Nang', meta:[{label:'Wi-Fi',val:'Стабильный'},{label:'Расположение',val:'5 мин от пляжа'},{label:'Часы работы',val:'07:00–22:00'},{label:'Этажей',val:'3'}], tips:[{icon:'🌊',text:'С верхнего этажа видно море — хорош для вечерней работы.'}] },
+  { name:'Trình Cà Phê', tag:'Бесплатно · Аутентичный', addr:'Район My An', desc:'Аутентичное вьетнамское кафе — кофе с авокадо, кокосовый кофе.', fullDesc:'Аутентичное вьетнамское кафе без туристического налёта. Попробуй cà phê trứng (кофе с яичной пеной), cà phê cốt dừa (с кокосовым молоком) или cà phê bơ (с авокадо). Ноутбуки приветствуются, персонал не торопит. Настоящий вьетнамский опыт.', price:'Бесплатно (за покупку)', emoji:'🇻🇳', maps:'https://maps.google.com/?q=Trinh+Ca+Phe+Da+Nang', meta:[{label:'Специалитет',val:'Авокадо-кофе, кокосовый кофе'},{label:'Атмосфера',val:'Местная, аутентичная'},{label:'Часы работы',val:'06:30–20:00'},{label:'Wi-Fi',val:'Есть'}] },
+];
+
+/* ══════════════════════════════════════
+   DATA: ATM LOCATIONS
+══════════════════════════════════════ */
+const atmData = [
+  { name:'Район An Thuong', tag:'Кластер банкоматов', addr:'Nguyễn Văn Thoại и окрестности', desc:'Главный номадский район. Несколько VPBank, ACB и BIDV в пешей доступности.', fullDesc:'Район An Thuong — номадский хаб Дананга. Несколько банкоматов VPBank и ACB (без комиссии) расположены в пешей доступности от большинства кафе. Также есть BIDV и Sacombank. Лучший район чтобы не тратить время на поиск банкомата.', emoji:'🏦', maps:'https://maps.google.com/?q=VPBank+ATM+An+Thuong+Da+Nang', meta:[{label:'Банки',val:'VPBank, ACB, BIDV'},{label:'Комиссия',val:'0 VND (VPBank, ACB)'},{label:'Доступность',val:'Круглосуточно'},{label:'Расстояние',val:'Пешком'}] },
+  { name:'Vincom Plaza Da Nang', tag:'Торговый центр', addr:'910A Ngô Quyền, Sơn Trà', desc:'Целый ряд банкоматов разных банков — удобно сравнить на месте.', fullDesc:'В торговом центре Vincom Plaza сосредоточено несколько банкоматов разных банков на одном месте. Удобно если хочется выбрать банк с наилучшими условиями. Кондиционер, охрана, безопасно в любое время суток. Также есть обменники.', emoji:'🏬', maps:'https://maps.google.com/?q=Vincom+Plaza+Da+Nang', site:'https://vincom.com.vn', meta:[{label:'Банки',val:'VPBank, BIDV, Vietcombank, ACB'},{label:'Часы работы',val:'09:30–22:00'},{label:'Безопасность',val:'Охрана, видеонаблюдение'},{label:'Бонус',val:'Обменники рядом'}] },
+  { name:'Улица Trần Phú', tag:'Центр города', addr:'Trần Phú, Hải Châu', desc:'Центральная улица с плотной концентрацией отделений всех крупных банков.', fullDesc:'Центральная улица Дананга с высокой концентрацией банковских отделений и их банкоматов. Здесь расположены Vietcombank, BIDV, Sacombank, ACB и другие. Банкоматы доступны круглосуточно, охраняемые вестибюли. Рядом туристический центр и набережная реки Хан.', emoji:'🏛️', maps:'https://maps.google.com/?q=Tran+Phu+Street+Da+Nang+bank', meta:[{label:'Банки',val:'Все крупные банки'},{label:'Часы банкоматов',val:'Круглосуточно'},{label:'Расположение',val:'Центр, набережная'},{label:'Транспорт',val:'Легко добраться Grab'}] },
+];
+
+/* ══════════════════════════════════════
+   DATA: BEACHES
+══════════════════════════════════════ */
+const beachData = [
+  { name:'My Khe Beach', tag:'Пляж', addr:'Bãi biển Mỹ Khê, Sơn Trà', desc:'Главный пляж Дананга — входит в топ-6 пляжей Азии. Широкий, чистый, 8 км.', fullDesc:'Главный пляж Дананга и один из красивейших в Азии. Широкая полоса белого песка протяжённостью 8 км, тёплая вода, ровное дно. Утром — бегуны и йога с местными жителями, вечером — семьи и туристы. Хорошо развитая инфраструктура: душевые, кабинки, кафе и рестораны морепродуктов прямо на пляже. По будням относительно спокойно, в выходные — людно.', emoji:'🌊', maps:'https://maps.google.com/?q=My+Khe+Beach+Da+Nang', meta:[{label:'Длина',val:'8 км'},{label:'Инфраструктура',val:'Душ, кабинки, кафе'},{label:'Серфинг',val:'Май–июль'},{label:'Вход',val:'Бесплатно'},{label:'Транспорт',val:'5–10 мин от An Thuong'}], tips:[{icon:'🕖',text:'Приходи до 8 утра или после 16:00 — лучший свет и меньше народу.'},{icon:'🏄',text:'Аренда доски для серфинга — 100–150 тыс. VND/час в мае–июле.'},{icon:'🦺',text:'Спасатели работают с 06:00 до 18:00.'}] },
+  { name:'Bac My An Beach', tag:'Пляж', addr:'Bãi biển Bắc Mỹ An, Ngũ Hành Sơn', desc:'Тише чем My Khe — тот же белый песок, меньше туристов, хороший закат.', fullDesc:'Продолжение пляжа My Khe к югу — тот же белый песок и тёплая вода, но значительно меньше туристов. Особенно хорош поздним днём: волейбол, семейные пикники, красивый закат над горами Нгухань. Рядом много кафе и ресторанов. Лучший пляж для тех кто хочет пляжный отдых без толпы.', emoji:'🌅', maps:'https://maps.google.com/?q=Bac+My+An+Beach+Da+Nang', meta:[{label:'Атмосфера',val:'Спокойная, местная'},{label:'Закат',val:'Хороший вид'},{label:'Инфраструктура',val:'Кафе, душ'},{label:'Вход',val:'Бесплатно'}], tips:[{icon:'🏐',text:'Вечером местные играют в волейбол — можно присоединиться.'},{icon:'🌆',text:'Лучшее время для заката — 17:30–18:30 в летний сезон.'}] },
+  { name:'Non Nuoc Beach', tag:'Пляж · Живописный', addr:'Bãi biển Non Nước, Ngũ Hành Sơn', desc:'Самый живописный — у Мраморных гор. Почти пустой даже в выходные.', fullDesc:'Красивейший пляж Дананга у подножия знаменитых Мраморных гор (Ngũ Hành Sơn). Включён Forbes в список красивейших пляжей планеты. Почти пустой даже в выходные дни. Белый мелкий песок, бирюзовая вода, кокосовые пальмы. Удобно совместить с посещением Мраморных гор — вход 40 000 VND. Добираться ~15–20 минут от центра на Grab.', emoji:'🏔️', maps:'https://maps.google.com/?q=Non+Nuoc+Beach+Da+Nang', meta:[{label:'Расстояние от центра',val:'15–20 мин на Grab'},{label:'Мраморные горы',val:'Рядом, вход 40 тыс. VND'},{label:'Загруженность',val:'Почти пустой'},{label:'Волны',val:'Сильнее чем My Khe'}], tips:[{icon:'⛰️',text:'Совмести с Мраморными горами — выход к пляжу через горную тропу.'},{icon:'⚠️',text:'Волны здесь сильнее — будь осторожен при купании.'},{icon:'🚗',text:'Grab до Non Nuoc из центра — 50–80 тыс. VND.'}] },
+  { name:'Tan Tra Beach', tag:'Пляж · Скрытый', addr:'К югу от Non Nuoc, Ngũ Hành Sơn', desc:'Скрытый пляж между курортами — почти пустой, есть бар на берегу.', fullDesc:'Малоизвестный пляж между двумя курортами к югу от Non Nuoc. Большинство туристов его пропускают — и это огромный плюс. Широкое пространство, тишина, несколько пальм, практически нет инфраструктуры. Прямо на берегу — бар Ortus Bistro & Beers с хорошим меню. Добираться ~20–25 минут от центра на Grab или скутере.', emoji:'🌴', maps:'https://maps.google.com/?q=Tan+Tra+Beach+Da+Nang', meta:[{label:'Расстояние от центра',val:'20–25 мин'},{label:'Загруженность',val:'Почти пустой'},{label:'Бар',val:'Ortus Bistro & Beers'},{label:'Инфраструктура',val:'Минимальная'}], tips:[{icon:'🍺',text:'Ortus Bistro на пляже — отличные бургеры и холодное пиво.'},{icon:'🏍️',text:'На скутере удобнее — можно остановиться где хочешь.'}] },
+];
+
+/* ══════════════════════════════════════
+   DATA: LANGUAGE
+══════════════════════════════════════ */
+const langData = [
+  { cat:'Приветствия и вежливость', words:[
+    ['Xin chào','Синь чао','Привет / Здравствуйте'],
+    ['Cảm ơn','Кам эн','Спасибо'],
+    ['Không có gì','Кхонг ко зи','Пожалуйста / Не за что'],
+    ['Xin lỗi','Синь лой','Извините / Простите'],
+    ['Tạm biệt','Там бьет','До свидания'],
+    ['Vâng / Dạ','Вынг / Да','Да (вежливо)'],
+    ['Không','Кхонг','Нет'],
+    ['Tôi không hiểu','Той кхонг хьеу','Я не понимаю'],
+    ['Bạn có nói tiếng Anh không?','Бан ко ной тьенг Ань кхонг?','Вы говорите по-английски?'],
+    ['Làm ơn nói chậm hơn','Лам эн ной чым хэн','Говорите медленнее, пожалуйста'],
+  ]},
+  { cat:'Еда и кафе', words:[
+    ['Cho tôi xem thực đơn','Чо той хем тхык дэн','Можно меню?'],
+    ['Tôi muốn gọi món này','Той муон гой мон ной','Я хочу заказать это'],
+    ['Không cay','Кхонг кай','Без острого'],
+    ['Rất ngon','Рат нгон','Очень вкусно'],
+    ['Tính tiền','Тинь тьен','Счёт, пожалуйста'],
+    ['Nước','Ныок','Вода'],
+    ['Cà phê','Ка фе','Кофе'],
+    ['Bia','Биа','Пиво'],
+    ['Cơm','Кэм','Рис'],
+    ['Không có thịt','Кхонг ко тхит','Без мяса (вегетарианское)'],
+  ]},
+  { cat:'Транспорт', words:[
+    ['Tôi muốn đi đến...','Той муон ди ден...','Я хочу поехать в...'],
+    ['Bao nhiêu tiền?','Бао ньеу тьен?','Сколько стоит?'],
+    ['Dừng ở đây','Зынг э дэй','Остановите здесь'],
+    ['Xe máy','Хе май','Скутер / мотоцикл'],
+    ['Taxi','Такси','Такси'],
+    ['Bãi biển','Бай бьен','Пляж'],
+    ['Sân bay','Сэн бай','Аэропорт'],
+    ['Khách sạn','Кхак сан','Отель'],
+    ['Trái / Phải','Чай / Фай','Налево / Направо'],
+    ['Thẳng','Тханг','Прямо'],
+  ]},
+  { cat:'Шоппинг и рынок', words:[
+    ['Cái này giá bao nhiêu?','Кай ной зиа бао ньеу?','Сколько это стоит?'],
+    ['Đắt quá','Дат куа','Слишком дорого'],
+    ['Giảm giá được không?','Зям зиа дыок кхонг?','Можно скидку?'],
+    ['Tôi mua cái này','Той муа кай ной','Я возьму это'],
+    ['Tôi không mua','Той кхонг муа','Я не покупаю'],
+    ['Tiền mặt','Тьен мат','Наличные'],
+    ['Thẻ tín dụng','Тхе тин зунг','Кредитная карта'],
+    ['Túi ni lông','Туй ни лонг','Пакет'],
+    ['Chợ','Чэ','Рынок'],
+    ['Siêu thị','Сьеу тхи','Супермаркет'],
+  ]},
+  { cat:'Числа', words:[
+    ['Một','Мот','Один (1)'],
+    ['Hai','Хай','Два (2)'],
+    ['Ba','Ба','Три (3)'],
+    ['Bốn','Бон','Четыре (4)'],
+    ['Năm','Ным','Пять (5)'],
+    ['Mười','Мыой','Десять (10)'],
+    ['Một trăm','Мот чам','Сто (100)'],
+    ['Một nghìn','Мот нгин','Тысяча (1000)'],
+    ['Một triệu','Мот чьеу','Миллион (1 000 000)'],
+    ['Nửa','Нюа','Половина'],
+  ]},
+  { cat:'Здоровье и экстренные случаи', words:[
+    ['Cấp cứu!','Кап кыу!','Скорая помощь!'],
+    ['Gọi cảnh sát!','Гой каня сат!','Вызовите полицию!'],
+    ['Tôi bị bệnh','Той би бенг','Я болен / Мне плохо'],
+    ['Tôi bị đau','Той би дао','Мне больно'],
+    ['Bệnh viện','Бенг вьен','Больница'],
+    ['Nhà thuốc','Ня тхуок','Аптека'],
+    ['Bác sĩ','Бак си','Врач'],
+    ['Tôi dị ứng với...','Той зи ынг вой...','У меня аллергия на...'],
+    ['Giúp tôi với!','Зуп той вой!','Помогите!'],
+    ['Mất cắp!','Мат кап!','Украли!'],
+  ]},
+  { cat:'Жильё', words:[
+    ['Phòng','Фонг','Комната / Номер'],
+    ['Còn phòng không?','Кон фонг кхонг?','Есть свободные номера?'],
+    ['Nhận phòng','Нян фонг','Заселение (чекин)'],
+    ['Trả phòng','Ча фонг','Выезд (чекаут)'],
+    ['Điều hòa','Дьеу хоа','Кондиционер'],
+    ['Wi-Fi','Вай Фай','Wi-Fi'],
+    ['Mật khẩu','Мат кхао','Пароль'],
+    ['Khăn tắm','Кхан там','Полотенце'],
+    ['Hồ bơi','Хо бой','Бассейн'],
+    ['Dọn phòng','Зон фонг','Уборка номера'],
+  ]},
+  { cat:'Пляж и активности', words:[
+    ['Bơi','Бой','Плавать'],
+    ['Sóng lớn','Сонг лэн','Большие волны'],
+    ['Ô che nắng','О че нанг','Зонт от солнца'],
+    ['Ghế nằm','Ге нам','Шезлонг'],
+    ['Kem chống nắng','Кем чонг нанг','Солнцезащитный крем'],
+    ['Lặn biển','Лан бьен','Дайвинг / Снорклинг'],
+    ['Câu cá','Кэу ка','Рыбалка'],
+    ['Núi','Нуй','Гора'],
+    ['Thác nước','Тхак ныок','Водопад'],
+    ['Đi bộ','Ди бо','Пешеходная прогулка / Поход'],
+  ]},
+  { cat:'Время и погода', words:[
+    ['Hôm nay','Хом най','Сегодня'],
+    ['Ngày mai','Нгай май','Завтра'],
+    ['Hôm qua','Хом куа','Вчера'],
+    ['Mấy giờ rồi?','Мэй зо зой?','Который час?'],
+    ['Trời nóng','Чой нонг','Жарко'],
+    ['Trời mưa','Чой мыа','Дождь идёт'],
+    ['Trời nắng','Чой нанг','Солнечно'],
+    ['Mùa mưa','Муа мыа','Сезон дождей'],
+    ['Sáng / Chiều / Tối','Санг / Чьеу / Той','Утро / День / Вечер'],
+    ['Tuần','Туан','Неделя'],
+  ]},
+  { cat:'Интернет и связь', words:[
+    ['Điện thoại','Дьен тхоай','Телефон'],
+    ['Sạc','Шак','Зарядка / Зарядное устройство'],
+    ['Cắm sạc','Кам шак','Зарядить телефон'],
+    ['Mạng','Манг','Интернет / Сеть'],
+    ['SIM card','Сим кард','Сим-карта'],
+    ['Gọi điện','Гой дьен','Позвонить'],
+    ['Tin nhắn','Тин нян','Сообщение'],
+    ['Chụp ảnh','Чуп ань','Сфотографировать'],
+    ['Pin','Пин','Батарея'],
+    ['Cửa hàng điện thoại','Кыа хан дьен тхоай','Магазин телефонов'],
+  ]},
+];
+
+/* ══════════════════════════════════════
+   RENDER HELPERS
+══════════════════════════════════════ */
+function makeCard(item, container) {
+  const div = document.createElement('div');
+  div.className = 'card';
+  div.innerHTML = `
+    <span class="card-arrow">↗</span>
+    <div class="card-tag tag-${item.tagClass || 'cafe'}">${item.tag}</div>
+    <div class="card-name">${item.name}</div>
+    <div class="card-addr">${item.addr}</div>
+    <div class="card-desc">${item.desc}</div>
+    ${item.price ? `<span class="card-price ${item.price.startsWith('Бес') ? 'neutral' : ''}">${item.price}</span>` : ''}
+  `;
+  div.addEventListener('click', () => openDetail(item));
+  document.getElementById(container).appendChild(div);
+}
+
+// Render food
+foodData.street.forEach(i => { i.tagClass='street'; makeCard(i,'food-street'); });
+foodData.cafe.forEach(i => { i.tagClass='cafe'; makeCard(i,'food-cafe'); });
+foodData.resto.forEach(i => { i.tagClass='resto'; makeCard(i,'food-resto'); });
+
+// Render cowork
+coworkData.forEach(i => { i.tagClass='free'; makeCard(i,'cowork-cards'); });
+
+// Render ATM locations
+atmData.forEach(i => { i.tagClass='atm'; makeCard(i,'atm-cards'); });
+
+// Render beaches
+beachData.forEach(item => {
+  const div = document.createElement('div');
+  div.className = 'beach-card';
+  const pills = (item.meta||[]).slice(0,3).map(m=>`<span class="beach-pill">${m.val}</span>`).join('');
+  div.innerHTML = `
+    <div class="beach-header">
+      <div class="beach-name">${item.name}</div>
+      <div class="beach-pills">${pills}</div>
+    </div>
+    <div class="beach-desc">${item.desc}</div>
+    <div class="beach-meta">
+      ${(item.tips||[]).slice(0,2).map(t=>`<div class="beach-meta-item">${t.icon} ${t.text.substring(0,50)}...</div>`).join('')}
+    </div>
+  `;
+  div.addEventListener('click', () => openDetail(item));
+  document.getElementById('beach-cards').appendChild(div);
+});
+
+/* ══════════════════════════════════════
+   LANGUAGE TABLE
+══════════════════════════════════════ */
+const langTbody = document.getElementById('lang-tbody');
+const filterDiv = document.getElementById('lang-filter');
+const allBtn = document.createElement('button');
+allBtn.className = 'lang-filter-btn active';
+allBtn.textContent = 'Все';
+allBtn.dataset.cat = 'all';
+filterDiv.appendChild(allBtn);
+
+langData.forEach(cat => {
+  const btn = document.createElement('button');
+  btn.className = 'lang-filter-btn';
+  btn.textContent = cat.cat;
+  btn.dataset.cat = cat.cat;
+  filterDiv.appendChild(btn);
+
+  const catRow = document.createElement('tr');
+  catRow.className = 'lang-cat-row';
+  catRow.dataset.cat = cat.cat;
+  catRow.innerHTML = `<td colspan="3">${cat.cat}</td>`;
+  langTbody.appendChild(catRow);
+
+  cat.words.forEach(([viet, trans, ru]) => {
+    const tr = document.createElement('tr');
+    tr.dataset.cat = cat.cat;
+    tr.dataset.search = (viet + ' ' + trans + ' ' + ru).toLowerCase();
+    tr.innerHTML = `<td class="col-viet">${viet}</td><td class="col-trans">${trans}</td><td class="col-ru">${ru}</td>`;
+    langTbody.appendChild(tr);
+  });
+});
+
+let activeFilter = 'all';
+filterDiv.addEventListener('click', e => {
+  const btn = e.target.closest('.lang-filter-btn');
+  if (!btn) return;
+  activeFilter = btn.dataset.cat;
+  document.querySelectorAll('.lang-filter-btn').forEach(b => b.classList.toggle('active', b === btn));
+  applyLangFilter();
+});
+
+document.getElementById('lang-search').addEventListener('input', applyLangFilter);
+
+function applyLangFilter() {
+  const q = document.getElementById('lang-search').value.toLowerCase();
+  document.querySelectorAll('#lang-tbody tr').forEach(tr => {
+    const catMatch = activeFilter === 'all' || tr.dataset.cat === activeFilter;
+    const searchMatch = !q || (tr.dataset.search && tr.dataset.search.includes(q));
+    if (tr.classList.contains('lang-cat-row')) {
+      tr.classList.toggle('hidden-row', activeFilter !== 'all' && tr.dataset.cat !== activeFilter);
+    } else {
+      tr.classList.toggle('hidden-row', !catMatch || !searchMatch);
+    }
+  });
+}
+
+/* ══════════════════════════════════════
+   CONVERTER LOGIC
+══════════════════════════════════════ */
+const USD_VND = 26200, BYN_PER_USD = 2.87, BYN_VND = USD_VND / BYN_PER_USD;
+
+function fmtUSD(v, html=false) {
+  const n = v<0.1?v.toFixed(3):v<10?v.toFixed(2):v.toFixed(1);
+  return html?`<span class="cur-sym">$</span>${n}`:'$ '+n;
+}
+function fmtBYN(v, html=false) {
+  const n = v<0.1?v.toFixed(3):v<10?v.toFixed(2):v.toFixed(1);
+  return html?`<span class="cur-sym">BYN</span>${n}`:'BYN '+n;
+}
+
+const inpVND=document.getElementById('inp-vnd'),inpUSD=document.getElementById('inp-usd'),inpBYN=document.getElementById('inp-byn');
+let upd=false;
+function setFromVND(v){if(upd)return;upd=true;inpUSD.value=v?(v/USD_VND).toFixed(2):'';inpBYN.value=v?(v/BYN_VND).toFixed(2):'';upd=false;}
+function setFromUSD(v){if(upd)return;upd=true;inpVND.value=v?Math.round(v*USD_VND):'';inpBYN.value=v?(v*BYN_PER_USD).toFixed(2):'';upd=false;}
+function setFromBYN(v){if(upd)return;upd=true;inpVND.value=v?Math.round(v*BYN_VND):'';inpUSD.value=v?(v/BYN_PER_USD).toFixed(2):'';upd=false;}
+inpVND.addEventListener('input',()=>setFromVND(parseFloat(inpVND.value)||0));
+inpUSD.addEventListener('input',()=>setFromUSD(parseFloat(inpUSD.value)||0));
+inpBYN.addEventListener('input',()=>setFromBYN(parseFloat(inpBYN.value)||0));
+setFromVND(100000);
+
+const slider=document.getElementById('vnd-slider');
+slider.addEventListener('input',()=>{
+  const v=parseInt(slider.value);
+  document.getElementById('slider-vnd').textContent=v.toLocaleString('ru')+' VND';
+  document.getElementById('slider-usd').textContent=fmtUSD(v/USD_VND);
+  document.getElementById('slider-byn').textContent=fmtBYN(v/BYN_VND);
+});
+slider.dispatchEvent(new Event('input'));
+
+function fillVND(v){inpVND.value=v;setFromVND(v);switchTab(document.querySelector('[data-page="page-converter"]'));}
+
+const amounts=[1000,5000,10000,20000,50000,100000,200000,500000,1000000,2000000,5000000,10000000];
+const tb2=document.querySelector('#conversion-table tbody');
+amounts.forEach(v=>{
+  const tr=document.createElement('tr');
+  tr.innerHTML=`<td class="vnd-col">${v.toLocaleString('ru')} <span class="cur-sym">VND</span></td><td class="usd-col">${fmtUSD(v/USD_VND,true)}</td><td class="byn-col">${fmtBYN(v/BYN_VND,true)}</td>`;
+  tr.addEventListener('click',()=>fillVND(v));
+  tb2.appendChild(tr);
+});
+
+const prices=[
+  {name:'Фо бо (суп)',cat:'food',vnd:60000},{name:'Баньми (сэндвич)',cat:'food',vnd:30000},
+  {name:'Свежевыжатый сок',cat:'cafe',vnd:25000},{name:'Кофе (капхе)',cat:'cafe',vnd:35000},
+  {name:'Пиво Bia Hoi',cat:'cafe',vnd:15000},{name:'Обед в местном кафе',cat:'food',vnd:80000},
+  {name:'Обед в ресторане',cat:'food',vnd:200000},{name:'Кокос на пляже',cat:'market',vnd:25000},
+  {name:'Манго (1 кг)',cat:'market',vnd:40000},{name:'Grab (5 км)',cat:'transport',vnd:80000},
+  {name:'Аренда скутера (1 день)',cat:'transport',vnd:150000},{name:'Массаж (1 час)',cat:'market',vnd:300000},
+  {name:'Хостел (ночь)',cat:'hotel',vnd:250000},{name:'Гостиница 3★ (ночь)',cat:'hotel',vnd:900000},
+  {name:'Вода 500 мл',cat:'market',vnd:10000},{name:'Sim-карта',cat:'market',vnd:200000},
+];
+const catLabel={food:'Еда',cafe:'Кафе',market:'Рынок',transport:'Транспорт',hotel:'Жильё'};
+const tb1=document.querySelector('#prices-table tbody');
+prices.forEach(p=>{
+  const tr=document.createElement('tr');
+  tr.innerHTML=`<td>${p.name}<span class="badge">${catLabel[p.cat]}</span></td><td class="vnd-col">${p.vnd.toLocaleString('ru')} <span class="cur-sym">VND</span></td><td class="usd-col">${fmtUSD(p.vnd/USD_VND,true)}</td><td class="byn-col">${fmtBYN(p.vnd/BYN_VND,true)}</td>`;
+  tr.addEventListener('click',()=>{document.querySelectorAll('#prices-table tbody tr').forEach(r=>r.classList.remove('highlight'));tr.classList.add('highlight');fillVND(p.vnd);});
+  tb1.appendChild(tr);
+});
+</script>
+</body>
+</html>
